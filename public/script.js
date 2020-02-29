@@ -1,12 +1,43 @@
-// This code loads the IFrame Player API code asynchronously.
+/*******************************
+ * FireBase 
+ * *****************************/
+
+
+// Initialize Cloud Firestore through Firebase
+if (firebase.apps.length === 0) {
+    firebase.initializeApp({
+        apiKey: 'AIzaSyCputhH99bPIEO3YiW7S8SEX-dF4x4Py0w',
+        authDomain: 'watchtogether-take-home-projec.firebaseapp.com',
+        projectId: 'watchtogether-take-home-projec'
+    });
+}
+
+let db = firebase.firestore();
+let roomRef = db.doc("rooms/room1");
+
+let currentTime;
+let elapsedTime;
+let state;
+
+// Get realtime updates from other users.
+roomRef.onSnapshot(function(room) {
+    if (room && room.exists) {
+        const myData = room.data();
+        console.log(myData.currentTime);
+    }
+})
+
+/*******************************
+ * Youtube iFrame Player
+ * *****************************/
+// Loads the iFrame Player API code asynchronously.
 var tag = document.createElement('script');
 
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-// This function creates an <iframe> (and YouTube player)
-// after the API code downloads.
+// Creates <iframe> and Youtube Player.
 var player;
 
 function onYouTubeIframeAPIReady() {

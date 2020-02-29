@@ -7,4 +7,4 @@
 
 ## Tech Stack:
 - [IFrame Player API](https://developers.google.com/youtube/iframe_api_reference)
-- Firebase Realtime Database
+- [Firebase Cloud FireStore](https://firebase.google.com/docs/firestore)
