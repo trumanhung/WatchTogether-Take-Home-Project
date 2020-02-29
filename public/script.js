@@ -34,42 +34,24 @@ function onPlayerStateChange(event) {
     // }
     var color;
 
-    console.log(player.getCurrentTime())
-
     if (event.data == YT.PlayerState.PAUSED) {
-        color = "#DD2C00"; // paused = red
-        sendPauseVideo();
+        notifyBordereColor("#DD2C00") // paused = red
+        updateState(YT.PlayerState.PAUSED, player.getCurrentTime())
     } else if (event.data == YT.PlayerState.PLAYING) {
-        color = "#33691E"; // playing = green
-        sendPlayVideo();
+        notifyBordereColor("#33691E") // paused = red
+        updateState(YT.PlayerState.PLAYING, player.getCurrentTime())
     }
 
-
-    // Use border color as notification
-    if (color) {
-        changeBordereColor(color)
-        setTimeout(() => { changeBordereColor("#000000") }, 1500); // notification timeout
-    }
 }
 
-function changeBordereColor(color) {
+// Use border color as notification
+function notifyBordereColor(color) {
     const player = document.querySelector('#player')
     player.style.borderColor = color;
+
+    // notification timeout
+    setTimeout(() => { notifyBordereColor("#000000") }, 1500);
 }
-
-
-function sendPlayVideo() {
-    console.log("Send Play Video");
-}
-
-function sendPauseVideo() {
-    console.log("Send Pause Video");
-}
-
-// function sendSeekVideo() {
-//     console.log("Send Play Video");
-// }
-
 
 function playVideo() {
     player.playVideo();
@@ -82,6 +64,7 @@ function pauseVideo() {
 function seekVideo(second) {
     player.seekTo(second, true)
 }
+
 
 /*******************************
  * FireBase 
@@ -99,11 +82,6 @@ let db = firebase.firestore();
 // Currently we only have one room.
 let roomRef = db.doc("rooms/room1");
 
-let currentTime;
-let elapsedTime;
-let state;
-
-
 // When the Youtube video player is ready.
 function onPlayerReady() {
     // Get realtime updates from other users.
@@ -117,6 +95,7 @@ function onPlayerReady() {
 
             const playbackTime = (Date.now() - currentTime) / 1000 + elapsedTime;
 
+            pauseVideo();
             // Seek video dispite the state.
             seekVideo(playbackTime);
 
@@ -127,7 +106,21 @@ function onPlayerReady() {
                 pauseVideo();
             }
 
-
         }
     })
+}
+
+// Update function used when player state changed.
+function updateState(currentState, currentElapsedTime) {
+    roomRef.update({
+            currentTime: Date.now(),
+            elapsedTime: currentElapsedTime,
+            state: currentState
+        })
+        .then(function() {
+            console.log(`State updated to ${currentState}`);
+        })
+        .catch(function(error) {
+            console.error("Error adding document: ", error);
+        });
 }
