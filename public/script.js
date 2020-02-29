@@ -13,7 +13,6 @@ var player;
 
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
-        width: "100%",
         videoId: 'Hx-aXJ8skgk',
         events: {
             'onReady': onPlayerReady,
@@ -22,24 +21,23 @@ function onYouTubeIframeAPIReady() {
     });
 }
 
+let ignoreChange = false;
+
 // The API calls this function when the player's state changes.
-// The function indicates that when playing a video (state=1),
-// the player should play for six seconds and then stop.
-var done = false;
-
 function onPlayerStateChange(event) {
-    // if (event.data == YT.PlayerState.PLAYING && !done) {
-    //     setTimeout(stopVideo, 6000);
-    //     done = true;
-    // }
-    var color;
-
     if (event.data == YT.PlayerState.PAUSED) {
-        notifyBordereColor("#DD2C00") // paused = red
-        updateState(YT.PlayerState.PAUSED, player.getCurrentTime())
+        console.log("Paused");
+        if (!ignoreChange) {
+            notifyBordereColor("#DD2C00"); // paused = red
+            updateState(YT.PlayerState.PAUSED, player.getCurrentTime());
+        }
+
     } else if (event.data == YT.PlayerState.PLAYING) {
-        notifyBordereColor("#33691E") // paused = red
-        updateState(YT.PlayerState.PLAYING, player.getCurrentTime())
+        console.log("Played");
+        if (!ignoreChange) {
+            notifyBordereColor("#33691E"); // paused = red
+            updateState(YT.PlayerState.PLAYING, player.getCurrentTime());
+        }
     }
 
 }
@@ -54,14 +52,17 @@ function notifyBordereColor(color) {
 }
 
 function playVideo() {
+    console.log("Playing");
     player.playVideo();
 }
 
 function pauseVideo() {
+    console.log("Pausing");
     player.pauseVideo();
 }
 
 function seekVideo(second) {
+    console.log("Seeking");
     player.seekTo(second, true)
 }
 
@@ -82,12 +83,14 @@ let db = firebase.firestore();
 // Currently we only have one room.
 let roomRef = db.doc("rooms/room1");
 
+
 // When the Youtube video player is ready.
 function onPlayerReady() {
     // Get realtime updates from other users.
     roomRef.onSnapshot(function(room) {
         if (room && room.exists) {
             const myData = room.data();
+            console.log(myData)
 
             let currentTime = myData.currentTime;
             let elapsedTime = myData.elapsedTime;
@@ -95,7 +98,8 @@ function onPlayerReady() {
 
             const playbackTime = (Date.now() - currentTime) / 1000 + elapsedTime;
 
-            pauseVideo();
+            ignoreChange = true
+
             // Seek video dispite the state.
             seekVideo(playbackTime);
 
@@ -105,6 +109,11 @@ function onPlayerReady() {
             } else if (state == YT.PlayerState.PAUSED) {
                 pauseVideo();
             }
+
+
+            setTimeout(() => { ignoreChange = false }, 1000);
+
+
 
         }
     })
