@@ -10,10 +10,11 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 // Creates <iframe> and Youtube Player.
 var player;
+var videoId;
 
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
-        videoId: 'Hx-aXJ8skgk',
+        videoId: videoId,
         events: {
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange
@@ -92,9 +93,16 @@ function onPlayerReady() {
             const myData = room.data();
             console.log(myData)
 
+            let fetchedVideoId = myData.videoId
             let currentTime = myData.currentTime;
             let elapsedTime = myData.elapsedTime;
             let state = myData.state;
+
+            // Change video
+            if (videoId != fetchedVideoId) {
+                videoId = fetchedVideoId
+                player.loadVideoById({ videoId: videoId });
+            }
 
             const playbackTime = (Date.now() - currentTime) / 1000 + elapsedTime;
 
@@ -112,8 +120,6 @@ function onPlayerReady() {
 
 
             setTimeout(() => { ignoreChange = false }, 1000);
-
-
 
         }
     })
@@ -133,3 +139,37 @@ function updateState(currentState, currentElapsedTime) {
             console.error("Error adding document: ", error);
         });
 }
+
+
+// Update video Id
+function updateVideo(youtubeId) {
+    roomRef.update({
+            videoId: youtubeId,
+
+            // Reset playback info
+            currentTime: Date.now(),
+            elapsedTime: 0,
+            state: YT.PlayerState.PLAYING
+        })
+        .then(function() {
+            console.log(`Video Id updated to ${youtubeId}`);
+        })
+        .catch(function(error) {
+            console.error("Error adding document: ", error);
+        });
+}
+
+
+
+
+/*******************************
+ * DOM
+ * *****************************/
+// Change video
+document.querySelector("#youtubeId-submit").onclick = () => {
+    event.preventDefault()
+
+    const youtubeId = document.querySelector("#youtubeId").value;
+
+    updateVideo(youtubeId);
+};
