@@ -190,7 +190,16 @@ document.querySelector("#youtubeId-submit").onclick = () => {
 
     const youtubeId = document.querySelector("#youtubeId").value;
 
-    updateVideo(youtubeId);
+    if (youtubeId.length > 0) {
+        updateVideo(youtubeId);
+    } else {
+        // If input text is empty, display warning.
+        document.querySelector("#youtubeId").style.boxShadow = '0 0 5px red';
+
+        setTimeout(() => {
+            document.querySelector("#youtubeId").style.boxShadow = null;
+        }, 1500);
+    }
 };
 
 // Seek
@@ -203,7 +212,7 @@ document.querySelector("#progress-bar").addEventListener('mouseup', e => {
     updateTime(newTime);
 })
 
-
+// Play / Pause
 document.querySelector("#control").onclick = (e) => {
     console.log(e.target.innerText);
 
@@ -215,20 +224,10 @@ document.querySelector("#control").onclick = (e) => {
         e.target.innerText = 'play_arrow';
     }
 
-    // document.querySelector(".pause").style.display = 'initial !important';
-    // document.querySelector(".play").style.display = 'none';
 }
-
-// document.querySelector(".pause").onclick = () => {
-//     pauseVideo(YT.PlayerState.PAUSED);
-
-//     document.querySelector(".play").style.display = 'initial !important';
-//     // document.querySelector(".pause").style.display = 'none';
-// }
 
 
 // Update the value of our progress bar accordingly.
 function updateProgressBar(playbackTime) {
-    console.log("Update ProgressBar: " + (playbackTime / player.getDuration()))
     document.querySelector("#progress-bar").value = (playbackTime / player.getDuration());
 }
