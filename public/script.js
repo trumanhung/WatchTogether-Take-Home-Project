@@ -8,6 +8,11 @@ function init() {
         focus: true,
         show: true
     });
+
+    // Enable popovers (https://getbootstrap.com/docs/4.0/components/popovers/)
+    $(function() {
+        $('[data-toggle="popover"]').popover()
+    })
 }
 
 /*******************************
@@ -103,7 +108,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 // Creates <iframe> and Youtube Player.
 let player;
-let videoId = 'Hx-aXJ8skgk'; // default video id
+let videoId = 'kOD6zTB1rIs'; // default video id
 let db;
 let room;
 let roomRef;
