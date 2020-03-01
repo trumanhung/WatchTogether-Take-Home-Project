@@ -1,3 +1,16 @@
+.header {
+    margin: 20px 0;
+    padding-bottom: 1rem;
+    border-bottom: .05rem solid #e5e5e5;
+}
+
+.footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    color: #777;
+    border-top: .05rem solid #e5e5e5;
+}
+
 #progress-bar {
     position: relative;
     width: calc(100% - 40px);

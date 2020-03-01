@@ -1,4 +1,13 @@
 /*******************************
+ * User input
+ * *****************************/
+let room = prompt("Please enter a room name", "room1");
+room = (room == null) ? 'room1' : room
+
+document.querySelector('h3').innerHTML = `You are in <strong>${room}</strong>`;
+
+
+/*******************************
  * Youtube iFrame Player
  * *****************************/
 // Loads the iFrame Player API code asynchronously.
@@ -85,7 +94,15 @@ if (firebase.apps.length === 0) {
 
 let db = firebase.firestore();
 // Currently we only have one room.
-let roomRef = db.doc("rooms/room1");
+let roomRef = db.doc("rooms/" + room);
+
+// Create room if doeesn't exist
+roomRef.get()
+    .then((docSnapshot) => {
+        if (!docSnapshot.exists) {
+            roomRef.set({}) // create the document
+        }
+    });
 
 
 // When the Youtube video player is ready.
@@ -186,6 +203,24 @@ function updateVideo(youtubeId) {
 /*******************************
  * DOM
  * *****************************/
+// // Change video
+// document.querySelector("#youtubeId-submit").onclick = () => {
+//     event.preventDefault()
+
+//     const youtubeId = document.querySelector("#youtubeId").value;
+
+//     if (youtubeId.length === 11) {
+//         updateVideo(youtubeId);
+//     } else {
+//         // If input text is empty, display warning.
+//         document.querySelector("#youtubeId").style.boxShadow = '0 0 5px red';
+
+//         setTimeout(() => {
+//             document.querySelector("#youtubeId").style.boxShadow = null;
+//         }, 1500);
+//     }
+// };
+
 // Change video
 document.querySelector("#youtubeId-submit").onclick = () => {
     event.preventDefault()
@@ -226,13 +261,14 @@ document.querySelector("#control").onclick = (e) => {
 
 }
 
-
 // Update the value of our progress bar accordingly.
 function updateProgressBar(playbackTime) {
+    console.log(`Update progreess bar to ${playbackTime}`);
     document.querySelector("#progress-bar").value = (playbackTime / player.getDuration());
 }
 
 // Update Play/Pause button accordingly.
 function updateControl(input) {
+    console.log(`Update control to ${input}`);
     document.querySelector("#control").innerText = input;
 }

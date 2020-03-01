@@ -8,3 +8,5 @@
 ## Tech Stack:
 - [IFrame Player API](https://developers.google.com/youtube/iframe_api_reference)
 - [Firebase Cloud FireStore](https://firebase.google.com/docs/firestore)
+- [Firebase Hosting](https://firebase.google.com/docs/hosting)
+<!-- - [Bootstrap](https://getbootstrap.com/) for a quick style fix -->

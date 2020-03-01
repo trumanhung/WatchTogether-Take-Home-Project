@@ -5,8 +5,9 @@
     <meta charset="utf-8">
     <title>WatchTogether</title>
 
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="styles.css">
 
     <!-- Firebase JS SDK and libraries -->
     <script src="/__/firebase/7.9.3/firebase-app.js"></script>
@@ -19,6 +20,9 @@
 
 <body>
     <div id="container">
+        <div class="header clearfix">
+            <h3 class="text-muted">You are in in <strong>room1</strong></h3>
+        </div>
         <div id="player"></div>
 
         <form>
@@ -27,8 +31,12 @@
             <br>
             <label>Change videos: </label>
             <input id="youtubeId" type="text" placeholder="Enter a Youtube Id">
-            <button id="youtubeId-submit" type="submit">Submit</button>
+            <button id="youtubeId-submit" class="btn btn-success" type="submit">Submit</button>
         </form>
+
+        <footer class="footer">
+            <p>WatchTogether Take Home Project for Shuffle | Truman Hung</p>
+        </footer>
     </div>
 
     <script src='script.js'></script>
