@@ -14,7 +14,9 @@ var videoId;
 
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
-        videoId: videoId,
+        // Change default video here.
+        videoId: "sCNrK-n68CM",
+        playerVars: { 'autoplay': 0, 'controls': 0 },
         events: {
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange
@@ -25,20 +27,21 @@ function onYouTubeIframeAPIReady() {
 let ignoreChange = false;
 
 // The API calls this function when the player's state changes.
+// We will not use this call for seeking change due to its unreliability.
 function onPlayerStateChange(event) {
     if (event.data == YT.PlayerState.PAUSED) {
         console.log("Paused");
-        if (!ignoreChange) {
-            notifyBordereColor("#DD2C00"); // paused = red
-            updateState(YT.PlayerState.PAUSED, player.getCurrentTime());
-        }
+
+        notifyBordereColor("#DD2C00"); // paused = red
+        updateState(YT.PlayerState.PAUSED);
+
 
     } else if (event.data == YT.PlayerState.PLAYING) {
         console.log("Played");
-        if (!ignoreChange) {
-            notifyBordereColor("#33691E"); // paused = red
-            updateState(YT.PlayerState.PLAYING, player.getCurrentTime());
-        }
+
+        notifyBordereColor("#33691E"); // paused = red
+        updateState(YT.PlayerState.PLAYING);
+
     }
 
 }
@@ -49,7 +52,7 @@ function notifyBordereColor(color) {
     player.style.borderColor = color;
 
     // notification timeout
-    setTimeout(() => { notifyBordereColor("#000000") }, 1500);
+    setTimeout(() => { notifyBordereColor("#000000") }, 2500);
 }
 
 function playVideo() {
@@ -63,7 +66,7 @@ function pauseVideo() {
 }
 
 function seekVideo(second) {
-    console.log("Seeking");
+    console.log(`Seeking to ${second}`);
     player.seekTo(second, true)
 }
 
@@ -93,47 +96,59 @@ function onPlayerReady() {
             const myData = room.data();
             console.log(myData)
 
-            let fetchedVideoId = myData.videoId
-            let currentTime = myData.currentTime;
-            let elapsedTime = myData.elapsedTime;
-            let state = myData.state;
+            const playbackTime = (Date.now() - myData.currentTime) / 1000 + myData.elapsedTime;
 
             // Change video
-            if (videoId != fetchedVideoId) {
-                videoId = fetchedVideoId
-                player.loadVideoById({ videoId: videoId });
+            if (videoId != myData.videoId) {
+                videoId = myData.videoId;
+                player.loadVideoById({ videoId: videoId, startSeconds: playbackTime });
+                updateProgressBar(playbackTime);
+            } else if (updateTime) {
+                // Seek video dispite the state.
+                seekVideo(playbackTime);
+                updateProgressBar(playbackTime);
             }
-
-            const playbackTime = (Date.now() - currentTime) / 1000 + elapsedTime;
-
-            ignoreChange = true
-
-            // Seek video dispite the state.
-            seekVideo(playbackTime);
 
             // Play or Pause depending on the state.
-            if (state == YT.PlayerState.PLAYING) {
+            if (myData.state == YT.PlayerState.PLAYING) {
                 playVideo();
-            } else if (state == YT.PlayerState.PAUSED) {
+            } else if (myData.state == YT.PlayerState.PAUSED) {
                 pauseVideo();
             }
-
-
-            setTimeout(() => { ignoreChange = false }, 1000);
 
         }
     })
 }
 
-// Update function used when player state changed.
-function updateState(currentState, currentElapsedTime) {
+// Update state in FireStore.
+function updateState(currentState) {
+    ignoreChange = true
+
     roomRef.update({
-            currentTime: Date.now(),
-            elapsedTime: currentElapsedTime,
-            state: currentState
+            state: currentState,
+            updateTime: false
         })
         .then(function() {
             console.log(`State updated to ${currentState}`);
+            ignoreChange = false;
+        })
+        .catch(function(error) {
+            console.error("Error adding document: ", error);
+        });
+}
+
+// Update elapsed time in FireStore.
+function updateTime(currentElapsedTime) {
+    ignoreChange = true
+
+    roomRef.update({
+            currentTime: Date.now(),
+            elapsedTime: currentElapsedTime,
+            updateTime: true
+        })
+        .then(function() {
+            console.log(`Elapsed time updated to ${currentElapsedTime}`);
+            ignoreChange = false;
         })
         .catch(function(error) {
             console.error("Error adding document: ", error);
@@ -141,18 +156,22 @@ function updateState(currentState, currentElapsedTime) {
 }
 
 
-// Update video Id
+// Update video Id in FireStore.
 function updateVideo(youtubeId) {
+    ignoreChange = true
+
     roomRef.update({
             videoId: youtubeId,
 
             // Reset playback info
             currentTime: Date.now(),
             elapsedTime: 0,
-            state: YT.PlayerState.PLAYING
+            state: YT.PlayerState.PLAYING,
+            updateTime: true
         })
         .then(function() {
             console.log(`Video Id updated to ${youtubeId}`);
+            ignoreChange = false;
         })
         .catch(function(error) {
             console.error("Error adding document: ", error);
@@ -173,3 +192,43 @@ document.querySelector("#youtubeId-submit").onclick = () => {
 
     updateVideo(youtubeId);
 };
+
+// Seek
+document.querySelector("#progress-bar").addEventListener('mouseup', e => {
+    // Calculate the new time for the video.
+    console.log(e.target.value)
+    const newTime = player.getDuration() * e.target.value;
+
+    // Update time to database.
+    updateTime(newTime);
+})
+
+
+document.querySelector("#control").onclick = (e) => {
+    console.log(e.target.innerText);
+
+    if (e.target.innerText == "play_arrow") {
+        updateState(YT.PlayerState.PLAYING);
+        e.target.innerText = 'pause';
+    } else {
+        updateState(YT.PlayerState.PAUSED);
+        e.target.innerText = 'play_arrow';
+    }
+
+    // document.querySelector(".pause").style.display = 'initial !important';
+    // document.querySelector(".play").style.display = 'none';
+}
+
+// document.querySelector(".pause").onclick = () => {
+//     pauseVideo(YT.PlayerState.PAUSED);
+
+//     document.querySelector(".play").style.display = 'initial !important';
+//     // document.querySelector(".pause").style.display = 'none';
+// }
+
+
+// Update the value of our progress bar accordingly.
+function updateProgressBar(playbackTime) {
+    console.log("Update ProgressBar: " + (playbackTime / player.getDuration()))
+    document.querySelector("#progress-bar").value = (playbackTime / player.getDuration());
+}

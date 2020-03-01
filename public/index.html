@@ -6,6 +6,7 @@
     <title>WatchTogether</title>
 
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
     <!-- Firebase JS SDK and libraries -->
     <script src="/__/firebase/7.9.3/firebase-app.js"></script>
@@ -19,15 +20,17 @@
 <body>
     <div id="container">
         <div id="player"></div>
+
+        <form>
+            <i id="control" class="material-icons play">play_arrow</i>
+            <!-- <i id="control" class="material-icons pause">pause</i> -->
+            <input type="range" id="progress-bar" min="0" max="1" step="0.01" value="0">
+            <br>
+            <label>Change videos: </label>
+            <input id="youtubeId" type="text" placeholder="Enter a Youtube Id">
+            <button id="youtubeId-submit" type="submit">Submit</button>
+        </form>
     </div>
-
-    <form>
-        <label>Change videos: </label>
-        <input id="youtubeId" type="text" placeholder="Enter a Youtube Id">
-        <button id="youtubeId-submit" type="submit">Submit</button>
-    </form>
-
-
 
     <script src='script.js'></script>
 </body>
