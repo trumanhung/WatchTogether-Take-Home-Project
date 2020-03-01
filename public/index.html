@@ -19,9 +19,28 @@
 </head>
 
 <body>
+    <!-- Modal (Dialog) -->
+    <div class="modal fade" id="roomNameModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Please enter a room name</h5>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control" id="room-name">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="roomName-submit" class="btn btn-primary">Watch Youtube and Chill!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div id="container">
         <div class="header clearfix">
-            <h3 class="text-muted">You are in in <strong>room1</strong></h3>
+            <h3 class="text-muted">You are in <strong>room1</strong></h3>
         </div>
         <div id="player"></div>
 
@@ -30,14 +49,18 @@
             <input type="range" id="progress-bar" min="0" max="1" step="0.01" value="0">
             <br>
             <label>Change videos: </label>
-            <input id="youtubeId" type="text" placeholder="Enter a Youtube Id">
+            <input id="youtubeId" type="text" value="room1" placeholder="Enter a Youtube Id">
             <button id="youtubeId-submit" class="btn btn-success" type="submit">Submit</button>
         </form>
 
         <footer class="footer">
-            <p>WatchTogether Take Home Project for Shuffle | Truman Hung</p>
+            <p><a href="https://github.com/trumanhung/WatchTogether-Take-Home-Project">WatchTogether Take Home Project for Shuffle</a> | Truman Hung</p>
         </footer>
     </div>
+
+    <!-- BootStrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
     <script src='script.js'></script>
 </body>
