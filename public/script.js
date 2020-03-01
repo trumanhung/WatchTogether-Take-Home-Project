@@ -112,8 +112,10 @@ function onPlayerReady() {
             // Play or Pause depending on the state.
             if (myData.state == YT.PlayerState.PLAYING) {
                 playVideo();
+                updateControl('pause');
             } else if (myData.state == YT.PlayerState.PAUSED) {
                 pauseVideo();
+                updateControl('play_arrow');
             }
 
         }
@@ -218,10 +220,8 @@ document.querySelector("#control").onclick = (e) => {
 
     if (e.target.innerText == "play_arrow") {
         updateState(YT.PlayerState.PLAYING);
-        e.target.innerText = 'pause';
     } else {
         updateState(YT.PlayerState.PAUSED);
-        e.target.innerText = 'play_arrow';
     }
 
 }
@@ -230,4 +230,9 @@ document.querySelector("#control").onclick = (e) => {
 // Update the value of our progress bar accordingly.
 function updateProgressBar(playbackTime) {
     document.querySelector("#progress-bar").value = (playbackTime / player.getDuration());
+}
+
+// Update Play/Pause button accordingly.
+function updateControl(input) {
+    document.querySelector("#control").innerText = input;
 }
