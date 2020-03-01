@@ -190,7 +190,7 @@ document.querySelector("#youtubeId-submit").onclick = () => {
 
     const youtubeId = document.querySelector("#youtubeId").value;
 
-    if (youtubeId.length > 0) {
+    if (youtubeId.length === 11) {
         updateVideo(youtubeId);
     } else {
         // If input text is empty, display warning.
