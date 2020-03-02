@@ -1,5 +1,8 @@
 # WatchTogether-Take-Home-Project
 
+## Specification
+- [Specification](https://github.com/trumanhung/WatchTogether-Take-Home-Project/blob/master/Specification.pdf)
+
 ## Deliverables
 - [Screencast](https://youtu.be/7Nn_we9V1zM) on Youtube.
 - [Demo](https://watchtogether-take-home-projec.web.app/) available on FireBase Host.
