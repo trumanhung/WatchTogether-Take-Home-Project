@@ -6,7 +6,7 @@
 ## Deliverables
 - [Screencast](https://youtu.be/7Nn_we9V1zM) on Youtube.
 - [Demo](https://watchtogether-take-home-projec.web.app/) available on FireBase Host.
-- Dadabase can be viewed using [REST API](https://firestore.googleapis.com/v1/projects/watchtogether-take-home-projec/databases/(default)/documents/rooms).
+- Database can be viewed using [REST API](https://firestore.googleapis.com/v1/projects/watchtogether-take-home-projec/databases/(default)/documents/rooms).
 
 
 ## Acceptance Criteria
